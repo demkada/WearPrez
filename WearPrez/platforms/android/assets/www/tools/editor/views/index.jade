@@ -1,0 +1,39 @@
+extends layout
+
+block header
+  .navbar.container
+      #message.message.hidden
+        p This is a top level view of your presentation
+        div: .menu-item: button.js-handler--overview Overview
+    include topbar
+
+block sidemenu
+  include sidemenu
+
+block content
+  .reveal
+    .slides
+      section
+        .slide-edit-lock Edit content
+        .kreator-slide-content
+          h1 Hi!
+          p Welcome to kreator.js
+
+    #editor.visually-hidden: div
+
+    .progress
+      span
+
+    .add-slide.add-slide--right.js-handler--add-slide-right.noselect(data-direction="right") +
+    .add-slide.add-slide--bottom.js-handler--add-slide-down.noselect(data-direction="bottom") +
+
+block scripts
+  script(src="lib/quill.min.js")
+  script(src="lib/head.min.js")
+  script(src="lib/q.js")
+  script(src="lib/jszip.js")
+  script(src="lib/underscore-min.js")
+  script(src="lib/reveal.min.js")
+  script(src="http://cdn.peerjs.com/0.3/peer.js")
+  script(src="lib/shepherd.min.js")
+  script(src="lib/build/main.js")

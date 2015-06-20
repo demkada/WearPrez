@@ -6,7 +6,7 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "me.kadary.android.wearslider"
+        applicationId "me.kadary.apps.wearprez"
         minSdkVersion 20
         targetSdkVersion 22
         versionCode 1
