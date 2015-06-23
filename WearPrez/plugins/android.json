@@ -18,6 +18,16 @@
                         }
                     ]
                 }
+            },
+            "AndroidManifest.xml": {
+                "parents": {
+                    "/manifest/application": [
+                        {
+                            "xml": "<meta-data android:name=\"com.google.android.gms.version\" android:value=\"@integer/google_play_services_version\" />",
+                            "count": 1
+                        }
+                    ]
+                }
             }
         }
     },
@@ -26,6 +36,9 @@
             "PACKAGE_NAME": "me.kadary.apps.wearprez"
         },
         "io.jxcore.node": {
+            "PACKAGE_NAME": "me.kadary.apps.wearprez"
+        },
+        "com.google.play.services": {
             "PACKAGE_NAME": "me.kadary.apps.wearprez"
         }
     },

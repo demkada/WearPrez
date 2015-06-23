@@ -12,7 +12,8 @@ module.exports.metadata =
 // TOP OF METADATA
 {
     "cordova-plugin-whitelist": "1.0.0",
-    "io.jxcore.node": "0.0.1"
+    "io.jxcore.node": "0.0.1",
+    "com.google.play.services": "25.0.0"
 }
 // BOTTOM OF METADATA
 });

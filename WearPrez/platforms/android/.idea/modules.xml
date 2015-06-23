@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CordovaLib/CordovaLib.iml" filepath="$PROJECT_DIR$/CordovaLib/CordovaLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/com.google.play.services/com.google.play.services.iml" filepath="$PROJECT_DIR$/com.google.play.services/com.google.play.services.iml" />
+      <module fileurl="file://$PROJECT_DIR$/com.google.play.services/wearprez-google-play-services_lib/wearprez-google-play-services_lib.iml" filepath="$PROJECT_DIR$/com.google.play.services/wearprez-google-play-services_lib/wearprez-google-play-services_lib.iml" />
     </modules>
   </component>
 </project>

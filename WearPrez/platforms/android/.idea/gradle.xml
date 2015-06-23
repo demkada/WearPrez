@@ -10,6 +10,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/CordovaLib" />
+            <option value="$PROJECT_DIR$/com.google.play.services" />
+            <option value="$PROJECT_DIR$/com.google.play.services/wearprez-google-play-services_lib" />
           </set>
         </option>
       </GradleProjectSettings>

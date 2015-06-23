@@ -19,16 +19,40 @@
 
 package me.kadary.apps.wearprez;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
+
 import org.apache.cordova.*;
 
-public class MainActivity extends CordovaActivity
-{
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+public class MainActivity extends CordovaActivity implements MessageApi.MessageListener{
+
+    private static final String TAG = "WearPrez MainActivity";
+    public static final String PRESENTATION_MESSAGE_PATH = "/presentation";
+
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate Mobile");
         super.onCreate(savedInstanceState);
         // Set by <content src="index.html" /> in config.xml
         loadUrl(launchUrl);
+    }
+
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+        Log.i(TAG, "Enter OnMessageReceive " +  messageEvent.getSourceNodeId());
+        if (messageEvent.getPath().equals(PRESENTATION_MESSAGE_PATH)) {
+            Log.i(TAG, String.valueOf(messageEvent.getData()));
+        }
+
     }
 }

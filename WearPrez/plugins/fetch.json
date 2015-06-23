@@ -15,5 +15,13 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "com.google.play.services": {
+        "source": {
+            "type": "registry",
+            "id": "com.google.play.services"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

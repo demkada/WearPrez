@@ -51,6 +51,9 @@
         },
         "io.jxcore.node": {
             "PACKAGE_NAME": "me.kadary.apps.wearprez"
+        },
+        "com.google.play.services": {
+            "PACKAGE_NAME": "me.kadary.apps.wearprez"
         }
     },
     "dependent_plugins": {}
