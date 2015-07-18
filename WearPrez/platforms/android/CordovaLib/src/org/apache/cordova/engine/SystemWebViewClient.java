@@ -166,7 +166,7 @@ public class SystemWebViewClient extends WebViewClient {
          * Because of a timing issue we need to clear this history in onPageFinished as well as
          * onPageStarted. However we only want to do this if the doClearHistory boolean is set to
          * true. You see when you load a url with a # in it which is common in jQuery applications
-         * onPageStared is not called. Clearing the history at that point would break jQuery apps.
+         * onPageStared is not called. Clearing the history at that point would break jQuery android.
          */
         if (this.doClearHistory) {
             view.clearHistory();

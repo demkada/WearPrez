@@ -7,7 +7,7 @@
     <!--  Title for notification shown when GooglePlayServices needs to be updated for an
         application to work. [CHAR LIMIT=70] -->
     <string name="common_google_play_services_notification_needs_update_title">An application requires an update for Google Play services.</string>
-    <!--  Text for notification shown when the Android Wear apps needs to be updated. Only shown on the wearable. [CHAR LIMIT=NONE] -->
+    <!--  Text for notification shown when the Android Wear android needs to be updated. Only shown on the wearable. [CHAR LIMIT=NONE] -->
     <string name="common_android_wear_notification_needs_update_text"><xliff:g id="app_name">%1$s</xliff:g> requires an update to the Android Wear app.</string>
     <!--  Title for notification shown when GooglePlayServices needs to be enabled for an
         application to work. [CHAR LIMIT=70] -->

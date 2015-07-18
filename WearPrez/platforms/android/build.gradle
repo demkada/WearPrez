@@ -207,7 +207,7 @@ android {
     } else if (!cdvVersionCode) {
       def minSdkVersion = cdvMinSdkVersion ?: privateHelpers.extractIntFromManifest("minSdkVersion")
       // Vary versionCode by the two most common API levels:
-      // 14 is ICS, which is the lowest API level for many apps.
+      // 14 is ICS, which is the lowest API level for many android.
       // 20 is Lollipop, which is the lowest API level for the updatable system webview.
       if (minSdkVersion >= 20) {
         defaultConfig.versionCode += 9
