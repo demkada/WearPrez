@@ -37,8 +37,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     private SensorManager mSensorManager;
     private Sensor mSensor;
     private long lastUpdate = 0;
-    private float last_x, last_y, last_z;
-    private static final int SHAKE_THRESHOLD = 600;
+    private static final long updateIntervalMillis = 1000;
 
     private String presentationNodeId = null;
     private static final String PRESENTATION_CAPABILITY_NAME = "wearPrez";
@@ -56,7 +55,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_STATUS_ACCURACY_HIGH);
+        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
@@ -135,25 +134,23 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         Sensor mySensor = event.sensor;
-        Map<Character, Float> commandMap = new HashMap<Character, Float>();
+        Map<Character, Float> commandMap = new HashMap<>();
         if (mySensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
-            if (x >= 1 || x <= -1) {
+
+            long curTime = System.currentTimeMillis();
+
+            if ((curTime - lastUpdate) >= updateIntervalMillis) {
+                float x = event.values[0];
+                float y = event.values[1];
+                float z = event.values[2];
+
                 commandMap.put('x', x);
-                Log.i(TAG, "X=" + x);
-            }
-            if (y >= 1 || y <=-1) {
                 commandMap.put('y', y);
-                Log.i(TAG, "Y=" + y);
-            }
-            if (z >= 1 || z <= -1) {
                 commandMap.put('z', z);
-                Log.i(TAG, "Z=" + z);
-            }
-            if (!commandMap.isEmpty()) {
+                Log.i(TAG, "CommandMap: " + commandMap.toString());
+
                 sendMessage(convertToByteArray(commandMap), SWITCH_BETWEEN_SLIDES);
+                lastUpdate = curTime;
             }
         }
     }
@@ -218,9 +215,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
             object = objectInputStream.readObject();
-        } catch (ClassNotFoundException e) {
-            Log.e(TAG, "convertFromByteArray: " + e.getMessage());
-        } catch (IOException e) {
+        }  catch (Exception e) {
             Log.e(TAG, "convertFromByteArray: " + e.getMessage());
         }
         return object;

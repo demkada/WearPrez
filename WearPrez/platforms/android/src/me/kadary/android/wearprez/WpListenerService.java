@@ -1,7 +1,5 @@
 package me.kadary.android.wearprez;
 
-import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.util.Log;
 
 import com.google.android.gms.wearable.MessageEvent;
@@ -12,10 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +21,8 @@ public class WpListenerService extends WearableListenerService {
     private static final String TAG = "WearPrez Service";
     private static final String START_ACTIVITY_PATH = "/start-activity";
     public static final String SWITCH_BETWEEN_SLIDES = "/switch_slide";
+    private float xOffset, yOffset, zOffset;
+    private static final float threshold = 0.381f; //the distance in meter to do with the arm in 1s
 
 
     @Override
@@ -34,7 +31,22 @@ public class WpListenerService extends WearableListenerService {
         if (messageEvent.getPath().equals(SWITCH_BETWEEN_SLIDES)) {
             Map<Character, Float> commandMap = new HashMap<Character, Float>();
             commandMap = (Map<Character, Float>) convertFromByteArray(messageEvent.getData());
-            Log.i(TAG, "Message data: " + commandMap.toString());
+            if (!commandMap.isEmpty()) {
+                Log.i(TAG, "Message data: " + commandMap.toString());
+                float x = commandMap.get('x');
+                float y = commandMap.get('y');
+                float z = commandMap.get('z');
+
+                if (x >= threshold || x <= -threshold) {
+
+                }
+                if (y >= threshold || y <=-threshold) {
+
+                }
+                if (z >= threshold || z <= -threshold) {
+
+                }
+            }
         }
         else if (messageEvent.getPath().equals(START_ACTIVITY_PATH)) {
             if (!MainActivity.isActivityVisible()) {
