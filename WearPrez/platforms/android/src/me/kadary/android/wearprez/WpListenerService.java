@@ -1,6 +1,7 @@
 package me.kadary.android.wearprez;
 
 import android.util.Log;
+import android.view.KeyEvent;
 
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
@@ -22,29 +23,51 @@ public class WpListenerService extends WearableListenerService {
     private static final String START_ACTIVITY_PATH = "/start-activity";
     public static final String SWITCH_BETWEEN_SLIDES = "/switch_slide";
     private float xOffset, yOffset, zOffset;
-    private static final float threshold = 0.381f; //the distance in meter to do with the arm in 1s
-
+    private static final float threshold = 0.28f; //old value:0.381f; //the distance in meter to do with the arm in 1s
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        Log.i(TAG, "Event Received from: " + messageEvent.getSourceNodeId());
+        Log.i(TAG, "Message Received from: " + messageEvent.getSourceNodeId());
         if (messageEvent.getPath().equals(SWITCH_BETWEEN_SLIDES)) {
             Map<Character, Float> commandMap = new HashMap<Character, Float>();
             commandMap = (Map<Character, Float>) convertFromByteArray(messageEvent.getData());
             if (!commandMap.isEmpty()) {
                 Log.i(TAG, "Message data: " + commandMap.toString());
-                float x = commandMap.get('x');
-                float y = commandMap.get('y');
-                float z = commandMap.get('z');
-
-                if (x >= threshold || x <= -threshold) {
-
+                char axis = '0';
+                float value = 0f;
+                for (Map.Entry<Character, Float> entry : commandMap.entrySet()) {
+                    if (Math.abs(entry.getValue()) > Math.abs(value)) {
+                        value = entry.getValue();
+                        axis = entry.getKey();
+                    }
                 }
-                if (y >= threshold || y <=-threshold) {
 
-                }
-                if (z >= threshold || z <= -threshold) {
+                if (value >= threshold || value <= -threshold) {
+                    int keyEvent = KeyEvent.KEYCODE_DPAD_CENTER;
+                    boolean negative = Math.signum(value) < 0;
+                    switch (axis) {
+                        case 'x':
+                            if (negative) {
+                                keyEvent = KeyEvent.KEYCODE_DPAD_LEFT;
+                            }
+                            else {
+                                keyEvent = KeyEvent.KEYCODE_DPAD_RIGHT;
+                            }
+                            break;
+                        case 'y':
+                            if (negative) {
+                                keyEvent = KeyEvent.KEYCODE_DPAD_UP;
+                            }
+                            else {
+                                keyEvent = KeyEvent.KEYCODE_DPAD_DOWN;
+                            }
+                            break;
+                        case 'z':
 
+                            break;
+                    }
+                    MainActivity.fireEvent(KeyEvent.KEYCODE_DPAD_RIGHT);
+                    Log.e(TAG, "Value " + value + " has been dispatched to " + axis + " axis!");
                 }
             }
         }

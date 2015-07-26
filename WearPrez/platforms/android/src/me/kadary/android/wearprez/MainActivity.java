@@ -19,26 +19,21 @@
 
 package me.kadary.android.wearprez;
 
-import android.content.Intent;
+import android.app.Instrumentation;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.MessageEvent;
+
 
 import org.apache.cordova.*;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends CordovaActivity {
 
     private static final String TAG = "WearPrez MainActivity";
 
     private static boolean activityVisible = false;
+    private  static Instrumentation instrumentation = new Instrumentation();
+
     public static void setActivityVisible(boolean activityVisible) {
         MainActivity.activityVisible = activityVisible;
     }
@@ -58,6 +53,7 @@ public class MainActivity extends CordovaActivity {
     }
 
     public static boolean isActivityVisible() {
+
         return activityVisible;
     }
 
@@ -66,4 +62,14 @@ public class MainActivity extends CordovaActivity {
         setActivityVisible(false);
         super.onStop();
     }
+
+    protected static void fireEvent(final int keyEvent) {
+        final Thread t = new Thread() {
+            public void run() {
+                instrumentation.sendKeyDownUpSync(keyEvent);
+            }
+        };
+        t.start();
+    }
+
 }
