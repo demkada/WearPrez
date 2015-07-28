@@ -13,12 +13,22 @@
         </activity>
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 
-        <service android:name=".WpListenerService">
+        <service android:name="me.kadary.android.gestures.recorder.GestureRecorder">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>
         </service>
 
+        <service android:name="me.kadary.android.gestures.GestureRecognitionService"
+            android:enabled="true" android:label="GestureRecognitionService">
+            <intent-filter>
+                <action android:name="me.kadary.android.gestures.GESTURE_RECOGNIZER" />
+            </intent-filter>
+        </service>
+
     </application>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="22" />
 </manifest>

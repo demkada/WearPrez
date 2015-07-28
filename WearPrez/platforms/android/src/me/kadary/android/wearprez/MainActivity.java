@@ -20,12 +20,22 @@
 package me.kadary.android.wearprez;
 
 import android.app.Instrumentation;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
-
+import android.widget.Toast;
 
 
 import org.apache.cordova.*;
+
+import me.kadary.android.gestures.IGestureRecognitionListener;
+import me.kadary.android.gestures.IGestureRecognitionService;
+import me.kadary.android.gestures.classifier.Distribution;
 
 public class MainActivity extends CordovaActivity {
 
@@ -33,6 +43,9 @@ public class MainActivity extends CordovaActivity {
 
     private static boolean activityVisible = false;
     private  static Instrumentation instrumentation = new Instrumentation();
+
+    IGestureRecognitionService recognitionService;
+    String activeTrainingSet = "WearPrez Default";
 
     public static void setActivityVisible(boolean activityVisible) {
         MainActivity.activityVisible = activityVisible;
@@ -50,6 +63,26 @@ public class MainActivity extends CordovaActivity {
     protected void onStart() {
         setActivityVisible(true);
         super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        try {
+            recognitionService.unregisterListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        recognitionService = null;
+        unbindService(serviceConnection);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        Intent bindIntent = new Intent(this, me.kadary.android.gestures.GestureRecognitionService.class);
+        bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        super.onResume();
     }
 
     public static boolean isActivityVisible() {
@@ -71,5 +104,74 @@ public class MainActivity extends CordovaActivity {
         };
         t.start();
     }
+
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            recognitionService = IGestureRecognitionService.Stub.asInterface(service);
+            try {
+                recognitionService.startClassificationMode(activeTrainingSet);
+                recognitionService.registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
+            } catch (RemoteException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            recognitionService = null;
+        }
+    };
+
+    IBinder gestureListenerStub = new IGestureRecognitionListener.Stub() {
+
+        @Override
+        public void onGestureLearned(String gestureName) throws RemoteException {
+            Toast.makeText(MainActivity.this, String.format("Gesture %s learned", gestureName), Toast.LENGTH_SHORT).show();
+            System.err.println("Gesture %s learned");
+        }
+
+        @Override
+        public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
+            Toast.makeText(MainActivity.this, String.format("Training set %s deleted", trainingSet), Toast.LENGTH_SHORT).show();
+            System.err.println(String.format("Training set %s deleted", trainingSet));
+        }
+
+        @Override
+        public void onGestureRecognized(final Distribution distribution) throws RemoteException {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                   /* int keyEvent = KeyEvent.KEYCODE_DPAD_CENTER;
+                    boolean negative = Math.signum(value) < 0;
+                    switch (axis) {
+                        case 'x':
+                            if (negative) {
+                                keyEvent = KeyEvent.KEYCODE_DPAD_LEFT;
+                            }
+                            else {
+                                keyEvent = KeyEvent.KEYCODE_DPAD_RIGHT;
+                            }
+                            break;
+                        case 'y':
+                            if (negative) {
+                                keyEvent = KeyEvent.KEYCODE_DPAD_UP;
+                            }
+                            else {
+                                keyEvent = KeyEvent.KEYCODE_DPAD_DOWN;
+                            }
+                            break;
+                        case 'z':
+
+                            break;
+                    }
+                    MainActivity.fireEvent(KeyEvent.KEYCODE_DPAD_RIGHT);
+                    Log.e(TAG, "Value " + value + " has been dispatched to " + axis + " axis!");*/
+                }
+            });
+        }
+    };
 
 }
