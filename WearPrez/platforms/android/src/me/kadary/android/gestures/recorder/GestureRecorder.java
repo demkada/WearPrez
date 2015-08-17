@@ -15,7 +15,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Map;
 
-import me.kadary.android.wearprez.MainActivity;
+import me.kadary.android.wearprez.PrezActivity;
 
 /**
  * Created by kad on 18/07/15.
@@ -29,7 +29,6 @@ public class GestureRecorder extends WearableListenerService {
     final int MIN_GESTURE_SIZE = 8;
     float THRESHOLD = 2;
     boolean isRecording;
-
     int stepsSinceNoMovement;
     ArrayList<float[]> gestureValues;
     Context context;
@@ -151,7 +150,7 @@ public class GestureRecorder extends WearableListenerService {
             }
         }
         else if (messageEvent.getPath().equals(START_ACTIVITY_PATH)) {
-            if (!MainActivity.isActivityVisible()) {
+            if (!PrezActivity.isActivityVisible()) {
 
             }
         }

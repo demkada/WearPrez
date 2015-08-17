@@ -36,8 +36,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     private SensorManager mSensorManager;
     private Sensor mSensor;
-    private long lastUpdate = 0;
-    private static final long updateIntervalMillis = 1000;
 
     private String presentationNodeId = null;
     private static final String PRESENTATION_CAPABILITY_NAME = "wearPrez";
@@ -54,8 +52,8 @@ public class MainActivity extends Activity implements SensorEventListener {
         setContentView(R.layout.activity_main);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
@@ -135,23 +133,14 @@ public class MainActivity extends Activity implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         Sensor mySensor = event.sensor;
         Map<Character, Float> commandMap = new HashMap<>();
-        if (mySensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+        if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
-            long curTime = System.currentTimeMillis();
+            commandMap.put('x', event.values[0]);
+            commandMap.put('y', event.values[1]);
+            commandMap.put('z', event.values[2]);
+            Log.i(TAG, "CommandMap: " + commandMap.toString());
 
-            if ((curTime - lastUpdate) >= updateIntervalMillis) {
-                float x = event.values[0];
-                float y = event.values[1];
-                float z = event.values[2];
-
-                commandMap.put('x', x);
-                commandMap.put('y', y);
-                commandMap.put('z', z);
-                Log.i(TAG, "CommandMap: " + commandMap.toString());
-
-                sendMessage(convertToByteArray(commandMap), SWITCH_BETWEEN_SLIDES);
-                lastUpdate = curTime;
-            }
+            sendMessage(convertToByteArray(commandMap), SWITCH_BETWEEN_SLIDES);
         }
     }
 
@@ -169,7 +158,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     protected void onResume() {
         super.onResume();
-        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
     }
 
     private void sendMessage(final byte[] messageData, String messagePath) {
