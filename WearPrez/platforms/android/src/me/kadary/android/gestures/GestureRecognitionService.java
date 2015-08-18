@@ -21,14 +21,15 @@
  */
 package me.kadary.android.gestures;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.util.Log;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import me.kadary.android.gestures.classifier.Distribution;
 import me.kadary.android.gestures.classifier.GestureClassifier;
@@ -162,7 +163,7 @@ public class GestureRecognitionService extends Service implements GestureRecorde
 					e.printStackTrace();
 				}
 			}
-			System.out.println("Trained");
+			Log.i("WearPrez Gesture", "Trained");
 		} else if (isClassifying) {
 			Distribution distribution = classifier.classifySignal(activeTrainingSet, new Gesture(values, null));
 			if (distribution != null && distribution.size() > 0) {

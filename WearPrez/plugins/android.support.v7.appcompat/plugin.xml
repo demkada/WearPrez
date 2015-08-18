@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plugin xmlns="http://cordova.apache.org/ns/plugins/1.0"
+    id="android.support.v7.appcompat"
+    version="1.0.0">
+  <engines>
+    <engine name="cordova" version=">=3.0.0" />
+  </engines>
+
+  <name>Android Support v7 AppCompat</name>
+  
+  <platform name="android">
+    <config-file target="AndroidManifest.xml" parent="/manifest/application">
+    </config-file>
+     <framework src="libs/appcompat" custom="true" />		
+  </platform>
+</plugin>

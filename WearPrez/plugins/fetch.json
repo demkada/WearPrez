@@ -24,10 +24,19 @@
         "is_top_level": true,
         "variables": {}
     },
-    "android.support.v7-appcompat": {
+    "android.support.v7.appcompat": {
         "source": {
             "type": "git",
-            "url": "https://github.com/demkada/cordova-plugin-android-support-v7-appcompat.git",
+            "url": "https://github.com/demkada/cordova-plugin-android-support-v7-recyclerview.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "android.support.v7.recyclerview": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/demkada/cordova-plugin-android-support-v7-recyclerview.git",
             "subdir": "."
         },
         "is_top_level": true,

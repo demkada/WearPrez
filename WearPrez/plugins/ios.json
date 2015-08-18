@@ -55,7 +55,10 @@
         "com.google.play.services": {
             "PACKAGE_NAME": "me.kadary.apps.wearprez"
         },
-        "android.support.v7-appcompat": {
+        "android.support.v7.appcompat": {
+            "PACKAGE_NAME": "android.wearprez"
+        },
+        "android.support.v7.recyclerview": {
             "PACKAGE_NAME": "android.wearprez"
         }
     },

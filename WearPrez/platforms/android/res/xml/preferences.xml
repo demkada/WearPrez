@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/motion_preferences">
+        <PreferenceScreen
+            android:key="motion_preferences_key"
+            android:title="@string/motion_config">
+            <me.kadary.android.wearprez.config.GestureCalibrationPreference
+                android:key="left2right_preference"
+                android:title="@string/title_left2right_preference"
+                android:summary="@string/summary_left2right_preference"
+                android:dialogTitle="@string/dialog_title_left2right_preference" />
+
+        </PreferenceScreen>
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -21,6 +21,9 @@
  */
 package me.kadary.android.gestures.classifier;
 
+import android.content.Context;
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,8 +34,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
-
-import android.content.Context;
 
 import me.kadary.android.gestures.Gesture;
 import me.kadary.android.gestures.classifier.featureExtraction.IFeatureExtractor;
@@ -162,7 +163,7 @@ public class GestureClassifier {
 
 	public Distribution classifySignal(String trainingSetName, Gesture signal) {
 		if (trainingSetName == null) {
-			System.err.println("No Training Set Name specified");
+			Log.e("WearPrez Gesture", "No Training Set Name specified");
 			trainingSetName = "default";
 		}
 		if (!trainingSetName.equals(activeTrainingSet)) {

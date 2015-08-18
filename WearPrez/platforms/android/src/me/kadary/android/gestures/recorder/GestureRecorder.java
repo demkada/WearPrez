@@ -15,7 +15,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Map;
 
-import me.kadary.android.wearprez.PrezActivity;
+import me.kadary.android.wearprez.activities.PrezActivity;
 
 /**
  * Created by kad on 18/07/15.
@@ -46,7 +46,7 @@ public class GestureRecorder extends WearableListenerService {
     }
 
     public GestureRecorder() {
-
+        
     }
 
     private float calcVectorNorm(float[] values) {
@@ -62,7 +62,7 @@ public class GestureRecorder extends WearableListenerService {
 
     public void setThreshold(float threshold) {
         THRESHOLD = threshold;
-        System.err.println("New Threshold " + threshold);
+        Log.e("WearPrez Gesture", "New Threshold " + threshold);
     }
 
     public boolean isRunning() {
@@ -111,42 +111,43 @@ public class GestureRecorder extends WearableListenerService {
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        Log.i(TAG, "Message Received from: " + messageEvent.getSourceNodeId());
         if (messageEvent.getPath().equals(SWITCH_BETWEEN_SLIDES)) {
-            Map<Character, Float> commandMap = (Map<Character, Float>)
+            if (isRunning()) {
+                Log.i(TAG, "Message Received from: " + messageEvent.getSourceNodeId());
+                Map<Character, Float> commandMap = (Map<Character, Float>)
                     convertFromByteArray(messageEvent.getData());
-            float[] value = { commandMap.get('x'), commandMap.get('y'), commandMap.get('z') };
-            switch (recordMode) {
-                case MOTION_DETECTION:
-                    if (isRecording) {
-                        gestureValues.add(value);
-                        if (calcVectorNorm(value) < THRESHOLD) {
-                            stepsSinceNoMovement++;
-                        } else {
+                float[] value = { commandMap.get('x'), commandMap.get('y'), commandMap.get('z') };
+                switch (recordMode) {
+                    case MOTION_DETECTION:
+                        if (isRecording) {
+                            gestureValues.add(value);
+                            if (calcVectorNorm(value) < THRESHOLD) {
+                                stepsSinceNoMovement++;
+                            } else {
+                                stepsSinceNoMovement = 0;
+                            }
+                        } else if (calcVectorNorm(value) >= THRESHOLD) {
+                            isRecording = true;
                             stepsSinceNoMovement = 0;
+                            gestureValues = new ArrayList<float[]>();
+                            gestureValues.add(value);
                         }
-                    } else if (calcVectorNorm(value) >= THRESHOLD) {
-                        isRecording = true;
-                        stepsSinceNoMovement = 0;
-                        gestureValues = new ArrayList<float[]>();
-                        gestureValues.add(value);
-                    }
-                    if (stepsSinceNoMovement == 10) {
-
-                        System.out.println("Length is: " + String.valueOf(gestureValues.size() - 10));
-                        if (gestureValues.size() - 10 > MIN_GESTURE_SIZE) {
-                            listener.onGestureRecorded(gestureValues.subList(0, gestureValues.size() - 10));
+                        if (stepsSinceNoMovement == 10) {
+                            Log.i("WearPrez Gesture", "Length is: " + String.valueOf(gestureValues.size() - 10));
+                            if (gestureValues.size() - 10 > MIN_GESTURE_SIZE) {
+                                listener.onGestureRecorded(gestureValues.subList(0, gestureValues.size() - 10));
+                            }
+                            gestureValues = null;
+                            stepsSinceNoMovement = 0;
+                            isRecording = false;
                         }
-                        gestureValues = null;
-                        stepsSinceNoMovement = 0;
-                        isRecording = false;
-                    }
-                    break;
-                case PUSH_TO_GESTURE:
-                    if (isRecording) {
-                        gestureValues.add(value);
-                    }
-                    break;
+                        break;
+                    case PUSH_TO_GESTURE:
+                        if (isRecording) {
+                            gestureValues.add(value);
+                        }
+                        break;
+                }
             }
         }
         else if (messageEvent.getPath().equals(START_ACTIVITY_PATH)) {

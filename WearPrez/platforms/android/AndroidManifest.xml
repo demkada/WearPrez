@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/WearPrezTheme">
-        <activity  android:name=".MainActivity"
+        <activity  android:name=".activities.MainActivity"
             android:label="@string/main_activity_name"
             android:theme="@style/WearPrezTheme">
             <intent-filter android:label="@string/launcher_name">
@@ -17,17 +17,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PrezActivity"
+        <activity android:name=".activities.PrezActivity"
             android:label="@string/prez_activity_name"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Black.NoTitleBar"
             android:windowSoftInputMode="adjustResize">
-
-        </activity>
-        <activity android:name=".SettingsActivity"
-            android:label="@string/prez_activity_name"
-            android:theme="@style/WearPrezTheme">
 
         </activity>
 
@@ -42,9 +37,6 @@
 
         <service android:name="me.kadary.android.gestures.GestureRecognitionService"
             android:enabled="true" android:label="GestureRecognitionService">
-            <intent-filter>
-                <action android:name="me.kadary.android.gestures.GESTURE_RECOGNIZER" />
-            </intent-filter>
         </service>
 
     </application>
