@@ -250,6 +250,8 @@ dependencies {
     releaseCompile project(path: ":CordovaLib", configuration: "release")
     debugCompile project(path: ":com.google.play.services:wearprez-google-play-services_lib", configuration: "debug")
     releaseCompile project(path: ":com.google.play.services:wearprez-google-play-services_lib", configuration: "release")
+    debugCompile project(path: ":android.support.v7-appcompat:wearprez-appcompat", configuration: "debug")
+    releaseCompile project(path: ":android.support.v7-appcompat:wearprez-appcompat", configuration: "release")
     // SUB-PROJECT DEPENDENCIES END
 }
 

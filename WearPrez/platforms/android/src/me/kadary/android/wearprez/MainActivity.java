@@ -19,159 +19,49 @@
 
 package me.kadary.android.wearprez;
 
-import android.app.Instrumentation;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
+
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
-import android.util.Log;
-import android.widget.Toast;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
+public class MainActivity extends AppCompatActivity {
 
-import org.apache.cordova.*;
-
-import me.kadary.android.gestures.IGestureRecognitionListener;
-import me.kadary.android.gestures.IGestureRecognitionService;
-import me.kadary.android.gestures.classifier.Distribution;
-
-public class MainActivity extends CordovaActivity {
-
-    private static final String TAG = "WearPrez MainActivity";
-
-    private static boolean activityVisible = false;
-    private  static Instrumentation instrumentation = new Instrumentation();
-
-    IGestureRecognitionService recognitionService;
-    String activeTrainingSet = "WearPrez Default";
-
-    public static void setActivityVisible(boolean activityVisible) {
-        MainActivity.activityVisible = activityVisible;
-    }
+    private Toolbar mToolbar;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.i(TAG, "onCreate Mobile");
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Set by <content src="index.html" /> in config.xml
-        loadUrl(launchUrl);
+        setContentView(R.layout.activity_main);
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override
-    protected void onStart() {
-        setActivityVisible(true);
-        super.onStart();
-    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-    @Override
-    protected void onPause() {
-        try {
-            recognitionService.unregisterListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
-        } catch (RemoteException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        recognitionService = null;
-        unbindService(serviceConnection);
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        Intent bindIntent = new Intent(this, me.kadary.android.gestures.GestureRecognitionService.class);
-        bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-        super.onResume();
-    }
-
-    public static boolean isActivityVisible() {
-
-        return activityVisible;
-    }
-
-    @Override
-    protected void onStop() {
-        setActivityVisible(false);
-        super.onStop();
-    }
-
-    protected static void fireEvent(final int keyEvent) {
-        final Thread t = new Thread() {
-            public void run() {
-                instrumentation.sendKeyDownUpSync(keyEvent);
-            }
-        };
-        t.start();
-    }
-
-    private final ServiceConnection serviceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            recognitionService = IGestureRecognitionService.Stub.asInterface(service);
-            try {
-                recognitionService.startClassificationMode(activeTrainingSet);
-                recognitionService.registerListener(IGestureRecognitionListener.Stub.asInterface(gestureListenerStub));
-            } catch (RemoteException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
         }
 
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-            recognitionService = null;
-        }
-    };
-
-    IBinder gestureListenerStub = new IGestureRecognitionListener.Stub() {
-
-        @Override
-        public void onGestureLearned(String gestureName) throws RemoteException {
-            Toast.makeText(MainActivity.this, String.format("Gesture %s learned", gestureName), Toast.LENGTH_SHORT).show();
-            System.err.println("Gesture %s learned");
-        }
-
-        @Override
-        public void onTrainingSetDeleted(String trainingSet) throws RemoteException {
-            Toast.makeText(MainActivity.this, String.format("Training set %s deleted", trainingSet), Toast.LENGTH_SHORT).show();
-            System.err.println(String.format("Training set %s deleted", trainingSet));
-        }
-
-        @Override
-        public void onGestureRecognized(final Distribution distribution) throws RemoteException {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                   /* int keyEvent = KeyEvent.KEYCODE_DPAD_CENTER;
-                    boolean negative = Math.signum(value) < 0;
-                    switch (axis) {
-                        case 'x':
-                            if (negative) {
-                                keyEvent = KeyEvent.KEYCODE_DPAD_LEFT;
-                            }
-                            else {
-                                keyEvent = KeyEvent.KEYCODE_DPAD_RIGHT;
-                            }
-                            break;
-                        case 'y':
-                            if (negative) {
-                                keyEvent = KeyEvent.KEYCODE_DPAD_UP;
-                            }
-                            else {
-                                keyEvent = KeyEvent.KEYCODE_DPAD_DOWN;
-                            }
-                            break;
-                        case 'z':
-
-                            break;
-                    }
-                    MainActivity.fireEvent(KeyEvent.KEYCODE_DPAD_RIGHT);
-                    Log.e(TAG, "Value " + value + " has been dispatched to " + axis + " axis!");*/
-                }
-            });
-        }
-    };
+        return super.onOptionsItemSelected(item);
+    }
 
 }

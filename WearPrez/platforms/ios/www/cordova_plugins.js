@@ -13,7 +13,8 @@ module.exports.metadata =
 {
     "cordova-plugin-whitelist": "1.0.0",
     "io.jxcore.node": "0.0.1",
-    "com.google.play.services": "25.0.0"
+    "com.google.play.services": "25.0.0",
+    "android.support.v7-appcompat": "3.0.0"
 }
 // BOTTOM OF METADATA
 });

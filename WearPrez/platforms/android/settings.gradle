@@ -2,3 +2,4 @@
 include ":"
 include ":CordovaLib"
 include ":com.google.play.services:wearprez-google-play-services_lib"
+include ":android.support.v7-appcompat:wearprez-appcompat"

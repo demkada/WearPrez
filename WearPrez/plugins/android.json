@@ -40,6 +40,9 @@
         },
         "com.google.play.services": {
             "PACKAGE_NAME": "me.kadary.apps.wearprez"
+        },
+        "android.support.v7-appcompat": {
+            "PACKAGE_NAME": "me.kadary.android.wearprez"
         }
     },
     "dependent_plugins": {}
