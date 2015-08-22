@@ -8,18 +8,18 @@
         android:id="@+id/trainingSetLabel" android:layout_below="@+id/seekBar1" />
     <TextView android:layout_toRightOf="@+id/trainingSetLabel"
         android:id="@+id/activeTrainingSet" android:layout_below="@+id/seekBar1"
-        android:layout_height="wrap_content" android:text="default"
+        android:layout_height="wrap_content" android:text="WearPrez_Default"
         android:layout_width="wrap_content"></TextView>
     <EditText android:id="@+id/trainingSetName"
         android:layout_height="wrap_content" android:background="@android:drawable/editbox_background"
-        android:inputType="text" android:text="default" android:layout_below="@id/trainingSetLabel"
+        android:inputType="text" android:text="WearPrez_Default" android:layout_below="@id/trainingSetLabel"
         android:layout_width="fill_parent" android:layout_toRightOf="@+id/startNewSetButton" />
     <TextView android:layout_height="wrap_content"
         android:layout_width="wrap_content" android:text="Gesture Name:"
         android:id="@+id/gestureLabel" android:layout_below="@+id/startNewSetButton"></TextView>
     <EditText android:id="@+id/gestureName" android:layout_width="fill_parent"
         android:layout_height="wrap_content" android:background="@android:drawable/editbox_background"
-        android:inputType="text" android:text="gesture0" android:layout_below="@+id/gestureLabel" />
+        android:inputType="text" android:text="Left2Right" android:layout_below="@+id/gestureLabel" />
     <Button android:id="@+id/startNewSetButton"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_alignLeft="@id/gestureName" android:text="Change Training Set"

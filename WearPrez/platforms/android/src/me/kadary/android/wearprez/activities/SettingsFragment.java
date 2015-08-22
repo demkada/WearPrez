@@ -30,8 +30,9 @@ import static com.google.android.gms.internal.zzhl.runOnUiThread;
 
 
 public class SettingsFragment extends Fragment {
+    private static final String TAG = "SettingsFragment";
     IGestureRecognitionService recognitionService;
-    String activeTrainingSet = "WearPrez_Motion";
+    String activeTrainingSet;
 
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -77,9 +78,6 @@ public class SettingsFragment extends Fragment {
             });
         }
     };
-    public SettingsFragment() {
-
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,6 +136,7 @@ public class SettingsFragment extends Fragment {
             public void onClick(View v) {
                 if (recognitionService != null) {
                     try {
+                        Log.e(TAG, "recognitionService: " + recognitionService.isLearning());
                         if (!recognitionService.isLearning()) {
                             startTrainButton.setText("Stop Training");
                             editText.setEnabled(false);

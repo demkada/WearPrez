@@ -1,30 +1,19 @@
 package me.kadary.android.gestures.recorder;
 
 import android.content.Context;
-
 import android.util.Log;
 
-import com.google.android.gms.wearable.MessageEvent;
-import com.google.android.gms.wearable.WearableListenerService;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Map;
-
-import me.kadary.android.wearprez.activities.PrezActivity;
 
 /**
  * Created by kad on 18/07/15.
  */
-public class GestureRecorder extends WearableListenerService {
+public class GestureRecorder implements WearableEventListener {
+    private static final String TAG = "Gesture Recorder";
 
-    private static final String TAG = "WearPrez Service";
-    private static final String START_ACTIVITY_PATH = "/start-activity";
-    public static final String SWITCH_BETWEEN_SLIDES = "/switch_slide";
+    public enum RecordMode {
+        MOTION_DETECTION, PUSH_TO_GESTURE
+    };
 
     final int MIN_GESTURE_SIZE = 8;
     float THRESHOLD = 2;
@@ -35,23 +24,16 @@ public class GestureRecorder extends WearableListenerService {
     GestureRecorderListener listener;
     boolean isRunning;
 
-    public enum RecordMode {
-        MOTION_DETECTION, PUSH_TO_GESTURE
-    };
-
     RecordMode recordMode = RecordMode.MOTION_DETECTION;
 
     public GestureRecorder(Context context) {
         this.context = context;
     }
 
-    public GestureRecorder() {
-        
-    }
-
     private float calcVectorNorm(float[] values) {
         float norm = (float) Math.sqrt(values[0] * values[0] + values[1] * values[1] +
                 values[2] * values[2]) - 9.9f;
+        Log.e(TAG, "VerctorNorm: " + norm);
         return norm;
     }
 
@@ -85,6 +67,47 @@ public class GestureRecorder extends WearableListenerService {
         }
     }
 
+    @Override
+    public void onEventReceived(WearableEvent wearableEvent) {
+        if(isRunning()) {
+            float[] value = wearableEvent.getValue();
+            Log.e(TAG, "Received value from listener: " + "[" + value[0] + "|" + value[1] + "|" + value[2] + "]");
+            Log.e(TAG, "recordMode: " + recordMode);
+            Log.e(TAG, "isRecording: " + isRecording);
+            switch (recordMode) {
+                case MOTION_DETECTION:
+                    if (isRecording) {
+                        gestureValues.add(value);
+                        if (calcVectorNorm(value) < THRESHOLD) {
+                            stepsSinceNoMovement++;
+                        } else {
+                            stepsSinceNoMovement = 0;
+                        }
+                    } else if (calcVectorNorm(value) >= THRESHOLD) {
+                        isRecording = true;
+                        stepsSinceNoMovement = 0;
+                        gestureValues = new ArrayList<float[]>();
+                        gestureValues.add(value);
+                    }
+                    if (stepsSinceNoMovement == 10) {
+
+                        System.out.println("Length is: " + String.valueOf(gestureValues.size() - 10));
+                        if (gestureValues.size() - 10 > MIN_GESTURE_SIZE) {
+                            listener.onGestureRecorded(gestureValues.subList(0, gestureValues.size() - 10));
+                        }
+                        gestureValues = null;
+                        stepsSinceNoMovement = 0;
+                        isRecording = false;
+                    }
+                    break;
+                case PUSH_TO_GESTURE:
+                    if (isRecording) {
+                        gestureValues.add(value);
+                    }
+                    break;
+            }
+        }
+    }
 
     public void registerListener(GestureRecorderListener listener) {
         this.listener = listener;
@@ -96,10 +119,12 @@ public class GestureRecorder extends WearableListenerService {
     }
 
     public void start() {
+        RemoteWearableEvent.addEventListener(this);
         isRunning = true;
     }
 
     public void stop() {
+        RemoteWearableEvent.removeEventListener(this);
         isRunning = false;
     }
 
@@ -108,77 +133,11 @@ public class GestureRecorder extends WearableListenerService {
         stop();
     }
 
-
-    @Override
-    public void onMessageReceived(MessageEvent messageEvent) {
-        if (messageEvent.getPath().equals(SWITCH_BETWEEN_SLIDES)) {
-            if (isRunning()) {
-                Log.i(TAG, "Message Received from: " + messageEvent.getSourceNodeId());
-                Map<Character, Float> commandMap = (Map<Character, Float>)
-                    convertFromByteArray(messageEvent.getData());
-                float[] value = { commandMap.get('x'), commandMap.get('y'), commandMap.get('z') };
-                switch (recordMode) {
-                    case MOTION_DETECTION:
-                        if (isRecording) {
-                            gestureValues.add(value);
-                            if (calcVectorNorm(value) < THRESHOLD) {
-                                stepsSinceNoMovement++;
-                            } else {
-                                stepsSinceNoMovement = 0;
-                            }
-                        } else if (calcVectorNorm(value) >= THRESHOLD) {
-                            isRecording = true;
-                            stepsSinceNoMovement = 0;
-                            gestureValues = new ArrayList<float[]>();
-                            gestureValues.add(value);
-                        }
-                        if (stepsSinceNoMovement == 10) {
-                            Log.i("WearPrez Gesture", "Length is: " + String.valueOf(gestureValues.size() - 10));
-                            if (gestureValues.size() - 10 > MIN_GESTURE_SIZE) {
-                                listener.onGestureRecorded(gestureValues.subList(0, gestureValues.size() - 10));
-                            }
-                            gestureValues = null;
-                            stepsSinceNoMovement = 0;
-                            isRecording = false;
-                        }
-                        break;
-                    case PUSH_TO_GESTURE:
-                        if (isRecording) {
-                            gestureValues.add(value);
-                        }
-                        break;
-                }
-            }
+    public void pause(boolean b) {
+        if (b) {
+            RemoteWearableEvent.removeEventListener(this);
+        } else {
+            RemoteWearableEvent.addEventListener(this);
         }
-        else if (messageEvent.getPath().equals(START_ACTIVITY_PATH)) {
-            if (!PrezActivity.isActivityVisible()) {
-
-            }
-        }
-    }
-
-    private byte[] convertToByteArray(Object object) {
-        ByteArrayOutputStream data = new ByteArrayOutputStream();
-        try {
-            ObjectOutputStream outputStream = new ObjectOutputStream(data);
-            outputStream.writeObject(object);
-        } catch (IOException e) {
-            Log.e(TAG, "convertToByteArray: " + e.getMessage());
-        }
-        return data.toByteArray();
-    }
-
-    private Object convertFromByteArray(byte[] data) {
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
-        Object object = null;
-        try {
-            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-            object = objectInputStream.readObject();
-        } catch (ClassNotFoundException e) {
-            Log.e(TAG, "convertFromByteArray: " + e.getMessage());
-        } catch (IOException e) {
-            Log.e(TAG, "convertFromByteArray: " + e.getMessage());
-        }
-        return object;
     }
 }

@@ -165,7 +165,9 @@ public class GestureRecognitionService extends Service implements GestureRecorde
 			}
 			Log.i("WearPrez Gesture", "Trained");
 		} else if (isClassifying) {
+			recorder.pause(true);
 			Distribution distribution = classifier.classifySignal(activeTrainingSet, new Gesture(values, null));
+			recorder.pause(false);
 			if (distribution != null && distribution.size() > 0) {
 				for (IGestureRecognitionListener listener : listeners) {
 					try {
